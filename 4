@@ -1,0 +1,42 @@
+import java.util.*;
+
+class CRC {
+    static final String GP = "10001000000100001";
+
+    static String checksum(String data) {
+        char[] bits = data.toCharArray();
+        for (int i = 0; i <= bits.length - GP.length(); i++) {
+            if (bits[i] == '1') {
+                for (int j = 0; j < GP.length(); j++) {
+                    if (bits[i + j] == GP.charAt(j))
+                        bits[i + j] = '0';
+                    else
+                        bits[i + j] = '1';
+                }
+            }
+        }
+        return new String(bits, bits.length - 17, 17);
+    }
+
+    static String appendCRC(String data) {
+        return data + checksum(data + "0".repeat(17));
+    }
+
+    static boolean validate(String data) {
+        return !checksum(data).contains("1");
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        System.out.print("Enter data bits: ");
+        String data = sc.next();
+        String code = appendCRC(data);
+        System.out.println("Data with CRC: " + code);
+        System.out.print("Enter received bits: ");
+        String received = sc.next();
+        if (validate(received))
+            System.out.println(" Correct Data");
+        else
+            System.out.println(" Invalid data");
+    }
+}
